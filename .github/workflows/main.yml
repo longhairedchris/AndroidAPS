@@ -25,7 +25,8 @@ jobs:
     #    ls -aR ${{ github.workspace }}
 
     - name: Build release apk
-      run: ./gradlew app:assembleFullRelease
+      # run: ./gradlew app:assembleFullRelease
+      run: ./gradlew app:assembleAapsclientRelease
 
     #- name: List files in the repository
     #  run: |
@@ -44,11 +45,20 @@ jobs:
       with:
         releaseDirectory: app/build/outputs/apk/full/release
         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-        alias: 'msarna'
-        keyStorePassword: '123456'
-        keyPassword: '123456'
+        alias: 'key0'
+        keyStorePassword: ${{ secrets.KEYSTORE_PW }}
+        keyPassword: ${{ secrets.KEY_PW }}
       env:
         BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
+
+    # Upload to Drive Account    
+    - name: Upload Artifacts To Google Drive
+      uses: Jumbo810/Upload_Github_Artifacts_TO_GDrive@v2.2.2
+      with:
+        target: app/build/outputs/apk/full/release/app-full-release.apk
+        credentials: ${{ secrets.DRIVE_CREDENTIALS }}
+        parent_folder_id: 1r8wkjlTCqF4Th1Tudo8p70Y_yvknP-1z
+        
 
     # - name: Upload APK Release
     #   uses: actions/upload-artifact@v4
