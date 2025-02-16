@@ -56,8 +56,8 @@ jobs:
     - name: Upload Artifacts To Google Drive
       uses: Jumbo810/Upload_Github_Artifacts_TO_GDrive@v2.2.2
       with:
-        # target: app/build/outputs/apk/full/release/app-full-release.apk
-        target:  app/build/outputs/apk/aapsclient/release/app-aapsclient-release.apk
+        # target: app/build/outputs/apk/full/release/app-full-release-unsigned-signed.apk
+        target:  app/build/outputs/apk/aapsclient/release/app-aapsclient-release-unsigned-signed.apk
         credentials: ${{ secrets.DRIVE_CREDENTIALS }}
         parent_folder_id: 1r8wkjlTCqF4Th1Tudo8p70Y_yvknP-1z
         
