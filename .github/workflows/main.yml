@@ -2,9 +2,9 @@ name: Android CI
 
 on:
   push:
-    # branches: [ "master" ]
+    branches: [ "master" ]
   pull_request:
-    # branches: [ "master" ]
+    branches: [ "master" ]
 env:  # Define global environment variables here
   PHONE_BUILD_PATH: "app/build/outputs/apk/full/release"
   WEAR_BUILD_PATH: "wear/build/outputs/apk/full/release"
@@ -88,7 +88,7 @@ jobs:
     - name: Upload Artifacts To Google Drive
       uses: Jumbo810/Upload_Github_Artifacts_TO_GDrive@v2.2.2
       with:
-        target:  ${{ env.WEAR_BUILD_PATH }}/app-full-release-unsigned-signed.apk
+        target:  ${{ env.WEAR_BUILD_PATH }}/wear-full-release-unsigned-signed.apk
         credentials: ${{ secrets.DRIVE_CREDENTIALS }}
         parent_folder_id: 1r8wkjlTCqF4Th1Tudo8p70Y_yvknP-1z
         name: wear-full-release-${{ env.APP_VERSION }}.apk
