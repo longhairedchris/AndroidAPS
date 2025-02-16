@@ -1,4 +1,4 @@
-name: Android CI
+name: Wear App Build
 
 on:
   push:
