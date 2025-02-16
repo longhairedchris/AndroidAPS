@@ -46,7 +46,7 @@ jobs:
         # releaseDirectory: app/build/outputs/apk/full/release
         releaseDirectory: app/build/outputs/apk/aapsclient/release
         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-        alias: 'key0'
+        alias: ${{ secrets.KEY_ALIAS }}
         keyStorePassword: ${{ secrets.KEYSTORE_PW }}
         keyPassword: ${{ secrets.KEY_PW }}
       env:
