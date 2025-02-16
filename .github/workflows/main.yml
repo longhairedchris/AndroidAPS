@@ -23,7 +23,14 @@ jobs:
     #- name: List files in the repository
     #  run: |
     #    ls -aR ${{ github.workspace }}
-
+    
+    - name: Extract App Version from Versions.kt
+      id: get_version
+      run: |
+        APP_VERSION=$(grep -oP 'const val appVersion = "\K[^"]+' buildSrc/src/main/kotlin/Versions.kt)
+        echo "App Version: $APP_VERSION"
+        echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+    
     - name: Build release apk
       # run: ./gradlew app:assembleFullRelease
       run: ./gradlew app:assembleAapsclientRelease
@@ -60,6 +67,7 @@ jobs:
         target:  app/build/outputs/apk/aapsclient/release/app-aapsclient-release-unsigned-signed.apk
         credentials: ${{ secrets.DRIVE_CREDENTIALS }}
         parent_folder_id: 1r8wkjlTCqF4Th1Tudo8p70Y_yvknP-1z
+        name: ${{ env.APP_VERSION }}.apk
         
 
     # - name: Upload APK Release
