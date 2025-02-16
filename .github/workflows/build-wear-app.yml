@@ -1,0 +1,65 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+env:  # Define global environment variables here
+  BUILD_PATH: "wear/build/outputs/apk/full/release"
+  BUILD_NAME: "wear-full-release"
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Extract App Version from Versions.kt
+      id: get_version
+      run: |
+        APP_VERSION=$(grep -oP 'const val appVersion = "\K[^"]+' buildSrc/src/main/kotlin/Versions.kt)
+        echo "App Version: $APP_VERSION"
+        echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+    
+    - name: Build release wear apk
+      run: ./gradlew wear:assembleFullRelease
+
+
+    - name: Setup build tool version variable
+      shell: bash
+      run: |
+        BUILD_TOOL_VERSION=$(ls /usr/local/lib/android/sdk/build-tools/ | tail -n 1)
+        echo "BUILD_TOOL_VERSION=$BUILD_TOOL_VERSION" >> $GITHUB_ENV
+        echo Last build tool version is: $BUILD_TOOL_VERSION
+        
+    - name: Sign wear app
+      uses: r0adkll/sign-android-release@v1
+      id: sign_wear
+      with:
+        releaseDirectory: ${{ env.BUILD_PATH }} 
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.KEY_ALIAS }}
+        keyStorePassword: ${{ secrets.KEYSTORE_PW }}
+        keyPassword: ${{ secrets.KEY_PW }}
+      env:
+        BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
+
+
+        
+    # Upload wear app to Drive Account    
+    - name: Upload Artifacts To Google Drive
+      uses: Jumbo810/Upload_Github_Artifacts_TO_GDrive@v2.2.2
+      with:
+        target:  ${{ env.BUILD_PATH }}/${{ env.BUILD_NAME }}-unsigned-signed.apk
+        credentials: ${{ secrets.DRIVE_CREDENTIALS }}
+        parent_folder_id: ${{ secrets.DRIVE_PARENT_FOLDER_ID }}
+        name: ${{ env.BUILD_NAME }}-${{ env.APP_VERSION }}.apk
+        
