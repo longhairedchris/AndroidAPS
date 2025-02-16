@@ -5,7 +5,10 @@ on:
     # branches: [ "master" ]
   pull_request:
     # branches: [ "master" ]
-
+env:  # Define global environment variables here
+  PHONE_BUILD_PATH: "app/build/outputs/apk/full/release"
+  WEAR_BUILD_PATH: "wear/build/outputs/apk/full/release"
+  DRIVE_PARENT_FOLDER: "1r8wkjlTCqF4Th1Tudo8p70Y_yvknP-1z"
 jobs:
   build:
 
@@ -52,8 +55,7 @@ jobs:
       uses: r0adkll/sign-android-release@v1
       id: sign_app
       with:
-        # releaseDirectory: app/build/outputs/apk/full/release
-        releaseDirectory: app/build/outputs/apk/aapsclient/release
+        releaseDirectory: ${{ env.PHONE_BUILD_PATH }} 
         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
         alias: ${{ secrets.KEY_ALIAS }}
         keyStorePassword: ${{ secrets.KEYSTORE_PW }}
@@ -65,7 +67,7 @@ jobs:
       uses: r0adkll/sign-android-release@v1
       id: sign_wear
       with:
-        releaseDirectory: wear/build/outputs/apk/full/release
+        releaseDirectory: ${{ env.WEAR_BUILD_PATH }} 
         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
         alias: ${{ secrets.KEY_ALIAS }}
         keyStorePassword: ${{ secrets.KEYSTORE_PW }}
@@ -77,17 +79,16 @@ jobs:
     - name: Upload Artifacts To Google Drive
       uses: Jumbo810/Upload_Github_Artifacts_TO_GDrive@v2.2.2
       with:    
-        target:  app/build/outputs/apk/full/release/app-full-release-unsigned-signed.apk
+        target:  ${{ env.PHONE_BUILD_PATH }}/app-full-release-unsigned-signed.apk
         credentials: ${{ secrets.DRIVE_CREDENTIALS }}
-        parent_folder_id: 1r8wkjlTCqF4Th1Tudo8p70Y_yvknP-1z
+        parent_folder_id: ${{ env.DRIVE_PARENT_FOLDER }}
         name: app-full-release-${{ env.APP_VERSION }}.apk
         
     # Upload wear app to Drive Account    
     - name: Upload Artifacts To Google Drive
       uses: Jumbo810/Upload_Github_Artifacts_TO_GDrive@v2.2.2
       with:
-        # target: app/build/outputs/apk/full/release/app-full-release-unsigned-signed.apk
-        target:  wear/build/outputs/apk/full/release/app-full-release-unsigned-signed.apk
+        target:  ${{ env.WEAR_BUILD_PATH }}/app-full-release-unsigned-signed.apk
         credentials: ${{ secrets.DRIVE_CREDENTIALS }}
         parent_folder_id: 1r8wkjlTCqF4Th1Tudo8p70Y_yvknP-1z
         name: wear-full-release-${{ env.APP_VERSION }}.apk
