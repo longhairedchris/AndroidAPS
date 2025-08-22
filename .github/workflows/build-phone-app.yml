@@ -29,6 +29,10 @@ jobs:
         echo "App Version: $APP_VERSION"
         echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
     
+    - name: foo
+      shell: bash
+      run: |       
+        echo ${{secrets.KEY_ALIAS}}
     - name: Build release phone apk
       run: ./gradlew app:assembleFullRelease
     
@@ -38,7 +42,6 @@ jobs:
         BUILD_TOOL_VERSION=$(ls /usr/local/lib/android/sdk/build-tools/ | tail -n 1)
         echo "BUILD_TOOL_VERSION=$BUILD_TOOL_VERSION" >> $GITHUB_ENV
         echo Last build tool version is: $BUILD_TOOL_VERSION
-        echo "alias $secrets.KEY_ALIAS"
         
     - name: Sign phone app
       uses: r0adkll/sign-android-release@v1
