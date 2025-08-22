@@ -29,10 +29,6 @@ jobs:
         echo "App Version: $APP_VERSION"
         echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
     
-    - name: foo
-      shell: bash
-      run: |       
-        echo ${{secrets.KEY_ALIAS}}
     - name: Build release phone apk
       run: ./gradlew app:assembleFullRelease
     
